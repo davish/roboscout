@@ -1,12 +1,19 @@
 import csv
 import copy
+import numpy
+
+def avg(l):
+  s = 0.0
+  for o in l:
+    s = s + o
+  return s / len(l)
 
 def getData():
   data = []
-  with open('scoreboard.csv', 'rb') as csvfile:
+  with open('scoreboard.csv', 'rU') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-      if row['Red 1'] != '':
+      if row['Red Score'] != '':
         data.append(row)
   return data
 
@@ -26,74 +33,61 @@ def teamToMatch(data):
       teams[row[n]].append(r)
   return teams
 
-def teamToAlliancePartners(teams):
-  """
-    Take teams/matches and return a list of alliance partners
-  """
-  allies = {}
+def teamToMatchScores(teams):
+  ms = {}
   for team, matches in teams.iteritems():
-    allies[team] = []
-    for match in matches:
-      num = int(match['position'][-1])
-      teammate = match['team'] + ' ' + str(num%2 +1)
-      allies[team].append(match[teammate])
-  return allies
+    ms[team] = [float(r[r['team']+' Score']) for r in matches]
+  return ms
 
-def teamToAllianceAverage(teams):
+def get_partners(matches):
+  r = []
+  for match in matches:
+    num = int(match['position'][-1])
+    teammate = match['team'] + ' ' + str(num%2 +1)
+    r.append(match[teammate])
+  return r
+
+def mapd(f, d):
   """
-    Take a teams/matches and return their average score.
+    Variant of map() that applies a function to each value
+    and associates it with the same key as the original dict
   """
-  avgs = {}
-  for team, matches in teams.iteritems():
-    scores = [float(r[r['team']+' Score']) for r in matches]
-    avgs[team] = avg(scores)
-  return avgs
+  r = {}
+  for k, v in d.iteritems():
+    r[k] = f(v)
+  return r
 
-def teamToPartnerAverages(allies, averages):
-  """ Take Alliance partners, and team averages, and return teams as keys and
-      a list of partner averages as the value
-  """
-  avgs = {}
-  for team, allies in allies.iteritems():
-    avgs[team] = []
-    for tm in allies:
-      avgs[team].append(averages[tm])
-  return avgs
+def zipd(k, v):
+  return dict(zip(k, v))
 
-def teamToMod(tavg, pavg):
-  mod = {}
-  for team, averg in tavg.iteritems():
-    mod[team] = round(tavg[team] - avg(pavg[team]), 3)
-  return mod
-
-def teamToEO(tavg, mod):
-  expo = {}
-  for team in tavg.keys():
-    expo[team] = (tavg[team] + mod[team])/2
-  return expo
-
-def teamToOPAR(expo):
-  avexpo = avg(expo.values())
-  opar = {}
-  for team, eo in expo.iteritems():
-    opar[team] = round(eo / avexpo, 1)
-  return opar
-def avg(l):
-  s = 0.0
-  for o in l:
-    s = s + o
-  return s / len(l)
+def mapzip(f, l):
+  return zipd(l, map(f, l))
 
 if __name__ == '__main__':
-  tm = teamToMatch(getData())
-  ta = teamToAllianceAverage(tm)
-  tp = teamToAlliancePartners(tm)
-  tpa = teamToPartnerAverages(tp, ta)
-  mod = teamToMod(ta, tpa)
-  expo = teamToEO(ta, mod)
-  opar = teamToOPAR(expo)
-  print opar['6081']
-  # for match in tm['8391']:
-  #   print match
-  # print tp['6081']
-  # avg(tpa['6081'])
+  m = teamToMatch(getData())
+  teams = m.keys()
+
+  tm = teamToMatchScores(m)
+  tp = mapd(get_partners, m)
+  ta = mapd(lambda a: avg(a), tm)
+  tpa = mapd(lambda tms: avg(map(ta.get, tms)), tp)
+ 
+  mod = mapzip(lambda t: round(ta[t]-tpa[t],3), teams)
+  expo = mapzip(lambda t: round((ta[t]+mod[t])/2,3), teams)
+  
+  avgexpo = avg(expo.values())
+  opar = mapd(lambda o: round(o/avgexpo,1), expo)
+  
+  stdev = mapzip(lambda t: numpy.std(
+    map(lambda match: round((match + mod[t])/2, 3),tm[t])), teams)
+
+  pdev = mapzip(lambda t: round(stdev[t] / expo[t], 3), teams)
+  oar = mapzip(lambda t: round(opar[t] * pdev[t], 1), teams)
+
+
+  import operator
+  rank = sorted(opar.items(), key=operator.itemgetter(1))
+  rank.reverse()
+
+  for team, r in rank:
+    print team + " opar:" + str(opar[team]) + " oar:" + str(oar[team])

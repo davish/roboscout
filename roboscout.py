@@ -1,12 +1,7 @@
 import csv
 import copy
 import numpy
-
-def avg(l):
-  s = 0.0
-  for o in l:
-    s = s + o
-  return s / len(l)
+from futil import *
 
 def getData():
   data = []
@@ -47,29 +42,6 @@ def get_partners(matches):
     r.append(match[teammate])
   return r
 
-def mapd(f, d):
-  """
-    Variant of map() that applies a function to each value
-    and associates it with the same key as the original dict
-  """
-  r = {}
-  for k, v in d.iteritems():
-    r[k] = f(v)
-  return r
-
-def zipd(k, v):
-  """
-    Create a dictionary from two lists, one keys, one values.
-  """
-  return dict(zip(k, v))
-
-def mapzip(f, l):
-  """
-    Similar to mapd, but f is passed the key as a part of list l
-    instead of a dictionary value
-  """
-  return zipd(l, map(f, l))
-
 def display(opar, oar):
   import operator
   rank = sorted(opar.items(), key=operator.itemgetter(1))
@@ -79,11 +51,13 @@ def display(opar, oar):
     s= team + " opar:" + str(opar[team]) + " oar:" + str(oar[team])
     print s
 
-if __name__ == '__main__':
-  m = teamToMatch(getData())
-  teams = m.keys()
 
-  tm = teamToMatchScores(m)
+def scout(d, m=None, tm=None):
+  if m is None:
+    m = teamToMatch(d)
+  if tm is None:
+    tm = teamToMatchScores(m)
+  teams = tm.keys()
   tp = mapd(get_partners, m)
   ta = mapd(lambda a: avg(a), tm) # average of all the team's matches
   # the average of each team's alliance partners' averages
@@ -96,7 +70,8 @@ if __name__ == '__main__':
   expo = mapzip(lambda t: round((ta[t]+mod[t])/2,3), teams)
   
   avgexpo = avg(expo.values())
-  opar = mapd(lambda o: round(o/avgexpo,1), expo)
+
+  opar = mapd(lambda x: 0, expo) if avgexpo==0 else mapd(lambda o: round(o/avgexpo,1), expo)
   
   # standard deviation of each round's expected individual output
   # based on the individual round score and the team's modifier
@@ -108,6 +83,20 @@ if __name__ == '__main__':
   # Percent deviation times OPAR gives the possible variance in OPAR
   # from round-to-round
   oar = mapzip(lambda t: round(opar[t] * pdev[t], 1), teams)
-  display(opar, oar)
 
-  
+  return {
+    'm': m,
+    'tp': tp,
+    'tm': tm,
+    'ta': ta,
+    'expo': expo,
+    'opar': opar,
+    'variance': stdev,
+    'oar': oar
+  }
+
+
+if __name__ == '__main__':
+  s = scout(getData())
+
+  display(s['opar'], s['oar'])

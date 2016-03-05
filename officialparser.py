@@ -20,6 +20,16 @@ def count_score(l):
   # print scores
   return sum(scores)
 
+def auto_score(l):
+  scores = [
+      auto_pos(l[0]), # ending position
+      auto_pos(l[1]),
+      l[2]*20, # beacon
+      l[3]*10, # climbers
+  ]
+  return sum(scores)
+
+
 def auto_pos(n):
   if n == 0: return 0
   elif n <= 3: return 5
@@ -27,12 +37,16 @@ def auto_pos(n):
   elif n == 5: return 20
   elif n == 6: return 40
 
-def tele_pos(n):
-  if n == 0: return 0
-  elif n == 1: return 5
-  elif n == 2: return 10
-  elif n == 3: return 20
-  elif n == 4: return 40
+regions = [
+  "New Jersey",
+  "New York",
+  "Maryland",
+  "Massachusettes",
+  "Connecticut",
+  "Virginia",
+  "Vermont",
+  "Massachusetts"
+]
 
 import csv
 def get_tournaments():
@@ -60,7 +74,9 @@ def get_tournaments():
           'Blue Breakdown': bs,
           'Red Breakdown': rs,
           'Blue Score': count_score(bs),
-          'Red Score': count_score(rs)
+          'Red Score': count_score(rs),
+          'Red Auto': auto_score(rs),
+          'Blue Auto': auto_score(bs)
           })
   return tournaments
 

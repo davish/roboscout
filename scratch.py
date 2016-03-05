@@ -1,26 +1,52 @@
 from roboscout import *
 from officialparser import *
 from metatournament import *
+from futil import *
 
+def print_table(h, d):
+  print ("%s\t| "*len(h)) % tuple(h)
+  for row in d:
+    s = ""
+    for x in xrange(len(h)):
+      s = s + str(row[x]) + "\t| "
+    print s
 
 if __name__ == '__main__':
   t = get_tournaments()
   
-  s = scout(t['Hudson Valley Championship'])
+  teams = progression(t)
+  print map(lambda d: d['tournament'] + ": " + str(d['robot']['caps']['high']), 
+    teams['4997'])
 
-  # print capabilities(s, MID_GOAL)['6051']
+  # expos, oars, caps = best_robots(t)
 
-  expos, oars, caps = best_robots(t)
+  # import operator
+  # rank = sorted(expos.items(), key=operator.itemgetter(1))
+  # rank.reverse()
 
-  import operator
-  rank = sorted(expos.items(), key=operator.itemgetter(1))
-  rank.reverse()
+  # h = ['team', 'indo', 'var', 'auto', 'high', 'mid', 'hang?']
+  # d = []
 
-  print "team # \t| indo \t| high \t| mid \t| hang?"
-  for team, r in rank[:20]:
-    s = team + "\t| " + str(round(r)) + "\t| " + str(caps[team]['high']) + "\t| "+str(round(caps[team]['mid'],2)) + "\t| "+str(caps[team]['hang'])
-    print s
+  # c=1
+  # for team, r in rank:
+  #   # if caps[team]['high'] > 2:
+  #   d.append([
+  #     team, 
+  #     round(r), 
+  #     round(oars[team]), 
+  #     round(caps[team]['auto'], 2),
+  #     round(caps[team]['high'],2), 
+  #     round(caps[team]['mid'],2), 
+  #     round(caps[team]['hang'],2)
+  #     ])
+  #   c+=1
 
-  # s = scout(t['Hudson Valley Championship'])
-  # print s['m']['6081'][0]
-  # display(s['opar'], s['oar'])
+   # print caps['6051']['auto']
+  # d = sorted(d[:20], key=operator.itemgetter(1), reverse=True)
+  # print_table(h, d)
+
+  
+
+
+
+ 

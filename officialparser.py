@@ -59,7 +59,7 @@ def get_tournaments():
       if row[1] not in tournaments:
         tournaments[row[1]] = []
 
-      if row[5] == '1':
+      if row[5] == '1': # only scrape qualification matches
         rs = map(int, row[26:44])
         bs = map(int, row[44:-1])
         tournaments[row[1]].append({
@@ -79,9 +79,3 @@ def get_tournaments():
           'Blue Auto': auto_score(bs)
           })
   return tournaments
-
-
-
-
-
-

@@ -93,9 +93,11 @@ def print_table(h, d):
 
 if __name__ == '__main__':
   t = get_tournaments()
-  
+
+  # print mapd(mode, auto_ending_pos(scout(t['Hudson Valley Championship'])))
+
   # teams = progression(t)
-  # print map(lambda d: d['tournament'] + ": " + str(d['robot']['caps']['auto']), 
+  # print map(lambda d: d['tournament'] + ": " + str(d['robot']['caps']['auto']),
   #   teams['6081'])
 
   expos, oars, caps = best_robots(t)
@@ -105,26 +107,27 @@ if __name__ == '__main__':
   rank.reverse()
 
   h = ['team', 'indo', 'auto', 'high', 'mid', 'hang?']
+  # h = ['team', 'indo', 'auto', 'end']
   d = []
 
   c=1
   for team, r in rank:
     # if caps[team]['high'] > 2:
     # if True:
-    if team in HOPPER:
-      if caps[team]['high'] > 2:
-      # if True:
+    if team in TESLA:
+    #   if caps[team]['high'] > 2:
+      if True:
         d.append([
-          team, 
-          round(r), 
-          # round(oars[team]), 
+          team,
+          round(r),
+          # round(oars[team]),
           round(caps[team]['auto'], 2),
-          round(caps[team]['high'],2), 
-          round(caps[team]['mid'],2), 
+        #   round(caps[team]['autopos'], 2),
+          round(caps[team]['high'],2),
+          round(caps[team]['mid'],2),
           round(caps[team]['hang'],2)
           ])
         c+=1
 
-  d = sorted(d, key=operator.itemgetter(1), reverse=True)
-  print_table(h, d)
- 
+  d = sorted(d, key=operator.itemgetter(3), reverse=True)
+  print_table(h, d[:20])

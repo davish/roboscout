@@ -24,6 +24,7 @@ def robot_stats(t):
   lowcap = capabilities(s, LOW_GOAL)
   hangcap = capabilities(s, HANG)
   auto = auto_expo(s)
+  autoend = futil.mapd(max, auto_ending_pos(s))
   teams = {}
   for team in highcap.keys():
     teams[team] = {
@@ -34,10 +35,10 @@ def robot_stats(t):
       'mid': midcap[team],
       'low': lowcap[team],
       'hang': hangcap[team],
-      'auto': auto[team]
+      'auto': auto[team],
+      'autopos': autoend[team]
       }
     }
-
   return teams
 
 def best_robots(ts):
@@ -60,8 +61,8 @@ def best_robots(ts):
 import futil
 
 def auto_expo(s):
-  ac = futil.mapd(lambda matches: map(
-      lambda m: m[m['team']+' Auto'], matches), s['m'])
+  ac = futil.mapd(
+      lambda matches: map(lambda m: m[m['team']+' Auto'], matches), s['m'])
   auto = roboscout.scout({}, s['m'], ac)
   return auto['expo']
 
@@ -70,3 +71,33 @@ def capabilities(s, i):
       lambda m: m[m['team']+' Breakdown'][i], matches), s['m'])
   cap = roboscout.scout({}, s['m'], tc)
   return cap['expo']
+
+def auto_ending_pos(s):
+    ap = futil.mapd(lambda matches: map(
+        lambda m: m[m['team']+' Breakdown'][0]
+        if m['position'] == 0 else
+        m[m['team']+' Breakdown'][1], matches), s['m'])
+
+    return ap
+
+def mode(list):
+
+	d = {}
+	for elm in list:
+		try:
+			d[elm] += 1
+		except(KeyError):
+			d[elm] = 1
+
+	keys = d.keys()
+	max = d[keys[0]]
+
+	for key in keys[1:]:
+		if d[key] > max:
+			max = d[key]
+
+	max_k = []
+	for key in keys:
+		if d[key] == max:
+			max_k.append(key),
+	return max_k[0]

@@ -61,23 +61,23 @@ def scout(d, m=None, tm=None):
   tp = mapd(get_partners, m)
   ta = mapd(lambda a: avg(a), tm) # average of all the team's matches
   # the average of each team's alliance partners' averages
-  # map(ta.get, tms) gets each alliance partner's average 
+  # map(ta.get, tms) gets each alliance partner's average
   tpa = mapd(lambda tms: avg(map(ta.get, tms)), tp)
- 
+
   # Difference between a team's average and their alliance partner's
   mod = mapzip(lambda t: round(ta[t]-tpa[t],3), teams)
   # Expected output of the team given their average and modifier
   expo = mapzip(lambda t: round((ta[t]+mod[t])/2,3), teams)
-  
+
   avgexpo = avg(expo.values())
 
   opar = mapd(lambda x: 0, expo) if avgexpo==0 else mapd(lambda o: round(o/avgexpo,1), expo)
-  
+
   # standard deviation of each round's expected individual output
   # based on the individual round score and the team's modifier
   stdev = mapzip(lambda t: numpy.std(
     map(lambda match: round((match + mod[t])/2, 3),tm[t])), teams)
-  # Percent deviation, taking the standard deviation divided by the 
+  # Percent deviation, taking the standard deviation divided by the
   # expected output
   pdev = mapzip(lambda t: round(stdev[t] / expo[t], 3), teams)
   # Percent deviation times OPAR gives the possible variance in OPAR
@@ -95,8 +95,5 @@ def scout(d, m=None, tm=None):
     'oar': oar
   }
 
-
 if __name__ == '__main__':
-  s = scout(getData())
-
-  display(s['opar'], s['oar'])
+  pass

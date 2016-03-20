@@ -1,5 +1,8 @@
+#!/usr/bin/python
+
 from roboscout import *
 from futil import *
+import sys
 
 def print_table(h, d):
     print ("%s\t| "*len(h)) % tuple(h)
@@ -11,7 +14,7 @@ def print_table(h, d):
 
 if __name__ == '__main__':
     import operator
-    s = scout(getData())
+    s = scout(getData(sys.argv[1]))
     h = ['#', 'opar', 'oar']
 
     d = []

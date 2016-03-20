@@ -14,6 +14,20 @@ def mapd(f, d):
     r[k] = f(v)
   return r
 
+def include(f, l):
+    r = []
+    for e in l:
+        if f(e):
+            r.append(e)
+    return r
+
+def filter_dict(f, d):
+    r = {}
+    for k, v in d.iteritems():
+        if f(k):
+            r[k] = v
+    return r
+
 def zipd(k, v):
   """
     Create a dictionary from two lists, one keys, one values.

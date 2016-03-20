@@ -3,12 +3,12 @@ import copy
 import numpy
 from futil import *
 
-def getData():
+def getData(csv_file='scoreboard.csv', empty=False):
   data = []
-  with open('scoreboard.csv', 'rU') as csvfile:
+  with open(csv_file, 'rU') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-      if row['Red Score'] != '':
+      if empty or row['Red Score'] != '':
         data.append(row)
   return data
 
@@ -53,10 +53,15 @@ def display(opar, oar):
 
 
 def scout(d, m=None, tm=None):
+
   if m is None:
     m = teamToMatch(d)
   if tm is None:
     tm = teamToMatchScores(m)
+
+  # m = filter_dict(lambda x: x != '6051', m)
+  # tm = filter_dict(lambda x: x != '6051', tm)
+
   teams = tm.keys()
   tp = mapd(get_partners, m)
   ta = mapd(lambda a: avg(a), tm) # average of all the team's matches
@@ -92,7 +97,8 @@ def scout(d, m=None, tm=None):
     'expo': expo,
     'opar': opar,
     'variance': stdev,
-    'oar': oar
+    'oar': oar,
+    'avg': avgexpo
   }
 
 if __name__ == '__main__':

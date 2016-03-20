@@ -91,43 +91,47 @@ def print_table(h, d):
       s = s + str(row[x]) + "\t| "
     print s
 
+def top_teams():
+    t = get_tournaments()
+
+    expos, oars, caps = best_robots(t)
+
+    import operator
+    rank = sorted(expos.items(), key=operator.itemgetter(1))
+    rank.reverse()
+
+    h = ['team', 'indo', 'auto', 'high', 'mid', 'hang?']
+    # h = ['team', 'indo', 'auto', 'end']
+    team_stats = []
+
+    c=1
+    for team, r in rank:
+        # if caps[team]['high'] > 2:
+        # if True:
+        if team in TESLA:
+            #   if caps[team]['high'] > 2:
+            if True:
+                team_stats.append([
+                team,
+                round(r),
+                round(caps[team]['auto'], 2),
+                round(caps[team]['high'],2),
+                round(caps[team]['mid'],2),
+                round(caps[team]['hang'],2)
+            ])
+            c+=1
+
+
+
+    d = sorted(team_stats, key=operator.itemgetter(3), reverse=True)
+    print_table(h, d[:20])
+
 if __name__ == '__main__':
-  t = get_tournaments()
+    s = scout(getData())
+    teams = ['5916', '8644', '6051']
 
-  # print mapd(mode, auto_ending_pos(scout(t['Hudson Valley Championship'])))
+    # s = scout(getData('scoreboard_hppr.csv'))
+    # teams = ['8390', '4029', '7393']
+    proj = map(lambda t: [t, s['expo'][t], s['variance'][t]], teams)
 
-  # teams = progression(t)
-  # print map(lambda d: d['tournament'] + ": " + str(d['robot']['caps']['auto']),
-  #   teams['6081'])
-
-  expos, oars, caps = best_robots(t)
-
-  import operator
-  rank = sorted(expos.items(), key=operator.itemgetter(1))
-  rank.reverse()
-
-  h = ['team', 'indo', 'auto', 'high', 'mid', 'hang?']
-  # h = ['team', 'indo', 'auto', 'end']
-  d = []
-
-  c=1
-  for team, r in rank:
-    # if caps[team]['high'] > 2:
-    # if True:
-    if team in TESLA:
-    #   if caps[team]['high'] > 2:
-      if True:
-        d.append([
-          team,
-          round(r),
-          # round(oars[team]),
-          round(caps[team]['auto'], 2),
-        #   round(caps[team]['autopos'], 2),
-          round(caps[team]['high'],2),
-          round(caps[team]['mid'],2),
-          round(caps[team]['hang'],2)
-          ])
-        c+=1
-
-  d = sorted(d, key=operator.itemgetter(3), reverse=True)
-  print_table(h, d[:20])
+    print_table(['team', 'expo', 'var'], proj)

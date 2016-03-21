@@ -14,7 +14,7 @@ def print_table(h, d):
 
 if __name__ == '__main__':
     import operator
-    s = scout(getData(sys.argv[1]))
+    s = scout(getData(sys.argv[1] if len(sys.argv) > 1 else 'scoreboard.csv'))
     h = ['#', 'opar', 'oar']
 
     d = []

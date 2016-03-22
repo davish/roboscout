@@ -59,9 +59,6 @@ def scout(d, m=None, tm=None):
   if tm is None:
     tm = teamToMatchScores(m)
 
-  # m = filter_dict(lambda x: x != '6051', m)
-  # tm = filter_dict(lambda x: x != '6051', tm)
-
   teams = tm.keys()
   tp = mapd(get_partners, m)
   ta = mapd(lambda a: avg(a), tm) # average of all the team's matches

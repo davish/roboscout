@@ -79,13 +79,14 @@ if __name__ == '__main__':
         predict_tournament('scoreboard_tesla.csv'),
         roboscout.getData('scoreboard_tesla.csv'))
 
-    h = ['Round #', 'Red Diff', 'Blue Diff', 'Win Predicted']
+    h = ['Round #', 'RD', 'BD', 'Right?']
 
     d = map(lambda n: [n['Round #'],
                        n['Red Diff'],
                        n['Blue Diff'],
                        n['Win Predicted']
                        ], confirmation)
-    print round(sum(map(
-        lambda n: 1 if n['Win Predicted'] else 0,
-        confirmation))/float(len(confirmation)), 2)
+    # print round(sum(map(
+    #     lambda n: 1 if n['Win Predicted'] else 0,
+    #     confirmation))/float(len(confirmation)), 2)
+    scratch.print_table(h, d)

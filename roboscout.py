@@ -69,8 +69,8 @@ def scout(d, m=None, tm=None):
   # Difference between a team's average and their alliance partner's
   mod = mapzip(lambda t: round(ta[t]-tpa[t],3), teams)
   # Expected output of the team given their average and modifier
-  expo = mapzip(lambda t: round((ta[t]+mod[t])/2,3), teams)
-
+  # expo = mapzip(lambda t: round((ta[t]+mod[t])/2,3), teams)
+  expo = mapzip(lambda t: round(ta[t]/2+mod[t]), teams)
   avgexpo = avg(expo.values())
 
   opar = mapd(lambda x: 0, expo) if avgexpo==0 else mapd(lambda o: round(o/avgexpo,1), expo)
@@ -78,7 +78,7 @@ def scout(d, m=None, tm=None):
   # standard deviation of each round's expected individual output
   # based on the individual round score and the team's modifier
   stdev = mapzip(lambda t: numpy.std(
-    map(lambda match: round((match + mod[t])/2, 3),tm[t])), teams)
+    map(lambda match: round(match/2+mod[t], 3),tm[t])), teams)
   # Percent deviation, taking the standard deviation divided by the
   # expected output
   pdev = mapzip(lambda t: round(stdev[t] / expo[t], 3), teams)
@@ -95,7 +95,7 @@ def scout(d, m=None, tm=None):
     'opar': opar,
     'variance': stdev,
     'oar': oar,
-    'avg': avgexpo
+    # 'avg': avgexpo
   }
 
 if __name__ == '__main__':

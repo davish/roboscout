@@ -52,7 +52,7 @@ import csv
 def get_tournaments():
   tournaments = {}
 
-  with open('holygrail.csv', 'rU') as csvfile:
+  with open('matchlists/holygrail.csv', 'rU') as csvfile:
     reader = csv.reader(csvfile)
     reader.next()
     for row in reader:
@@ -79,3 +79,25 @@ def get_tournaments():
           'Blue Auto': auto_score(bs)
           })
   return tournaments
+
+def parse_SR():
+    tournaments = {}
+    with open('matchlists/AllSR.csv', 'rU') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            t = row['SR'] + row['Div']
+            if t not in tournaments:
+                tournaments[t] = []
+            if row['Type'] == 'Q':
+                tournaments[t].append({
+                    'match #': row['Num'],
+                    'Red 1': row['R1'],
+                    'Red 2': row['R2'],
+                    'Red 3': row['R3'],
+                    'Blue 1': row['B1'],
+                    'Blue 2': row['B2'],
+                    'Blue 3': row['B3'],
+                    'Red Score': row['R'],
+                    'Blue Score': row['B']
+                })
+    return tournaments

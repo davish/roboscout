@@ -1,4 +1,5 @@
 import roboscout
+from futil import *
 
 HIGH_GOAL=7
 LOW_GOAL=8
@@ -101,3 +102,15 @@ def mode(list):
 		if d[key] == max:
 			max_k.append(key),
 	return max_k[0]
+
+def scout_SR(parsed):
+    scouted = mapd(roboscout.scout, parsed)
+    # teamToRegion = {}
+    s = {}
+    for tourney, stats in scouted.iteritems():
+        for category, teams in stats.iteritems():
+            if category not in s:
+                s[category] = {}
+            # teams = filter_dict(lambda t: t in WORLDS, teams)
+            s[category].update(teams)
+    return s

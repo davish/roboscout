@@ -4,7 +4,7 @@ import officialparser
 import scratch
 from futil import *
 
-def predict_tournament(matchlist_file, start=0):
+def predict_tournament(matchlist_file, expos=None, start=0):
     """
         - Given a matchlist for a tournament, predict the winner of each match.
         - If only the matchlist file is given, predict the tournament based
@@ -23,15 +23,16 @@ def predict_tournament(matchlist_file, start=0):
             if match[n] not in teams:
                 teams.append(match[n])
 
-    # Pre-scout from the main match pool
-    expos, vars, caps = metatournament.best_robots(
-        officialparser.get_tournaments())
+    if expos is None:
+        # Pre-scout from the main match pool
+        expos, vars, caps = metatournament.best_robots(
+            officialparser.get_tournaments())
 
-    # filter expo to only include teams we care about
-    expos = filter_dict(lambda t: t in teams, expos)
+        # filter expo to only include teams we care about
+        expos = filter_dict(lambda t: t in teams, expos)
 
-    # Run roboscout on the first n rounds to get more accurate
-    # expected output when possible.
+        # Run roboscout on the first n rounds to get more accurate
+        # expected output when possible.
 
     s = roboscout.scout(matches[:start])
 
@@ -75,18 +76,28 @@ def compare_matchlists(m1, m2):
     return confirmation
 
 if __name__ == '__main__':
-    confirmation = compare_matchlists(
-        predict_tournament('scoreboard_tesla.csv'),
-        roboscout.getData('scoreboard_tesla.csv'))
+    s = metatournament.scout_SR(officialparser.parse_SR())
+    t = predict_tournament('matchlists/scoreboard_franklin.csv', s['expo'], start=110)
 
-    h = ['Round #', 'RD', 'BD', 'Right?']
-
-    d = map(lambda n: [n['Round #'],
-                       n['Red Diff'],
-                       n['Blue Diff'],
-                       n['Win Predicted']
-                       ], confirmation)
-    # print round(sum(map(
-    #     lambda n: 1 if n['Win Predicted'] else 0,
-    #     confirmation))/float(len(confirmation)), 2)
+    d = map(lambda r: [r['Round #'],
+                       r['Red Score'],
+                       r['Blue Score'],
+                       'Blue' if r['Blue Score'] > r['Red Score'] else 'Red'], t)
+    h = ['#', 'Red', 'Blue', 'Winner']
     scratch.print_table(h, d)
+
+    # confirmation = compare_matchlists(
+    #     predict_tournament('scoreboard_tesla.csv'),
+    #     roboscout.getData('scoreboard_tesla.csv'))
+    #
+    # h = ['Round #', 'RD', 'BD', 'Right?']
+    #
+    # d = map(lambda n: [n['Round #'],
+    #                    n['Red Diff'],
+    #                    n['Blue Diff'],
+    #                    n['Win Predicted']
+    #                    ], confirmation)
+    # # print round(sum(map(
+    # #     lambda n: 1 if n['Win Predicted'] else 0,
+    # #     confirmation))/float(len(confirmation)), 2)
+    # scratch.print_table(h, d)

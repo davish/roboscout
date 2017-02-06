@@ -1,4 +1,13 @@
+"""
+futil.py
+
+Contains utilities for dealing with dictionaries in a functional manner.
+"""
+
 def avg(l):
+  """
+  Average of elements of a list.
+  """
   s = 0.0
   for o in l:
     s = s + o
@@ -6,7 +15,7 @@ def avg(l):
 
 def mapd(f, d):
   """
-    Variant of map() that applies a function to each value
+    Analog of of map() for dictionaries. Applies a function to each value
     and associates it with the same key as the original dict
   """
   r = {}
@@ -15,6 +24,11 @@ def mapd(f, d):
   return r
 
 def include(f, l):
+    """
+    f is a function that returns a boolean.
+    Filter elements of a list by whether f(e) returns true, where e is an
+    element of the list.
+    """
     r = []
     for e in l:
         if f(e):
@@ -22,6 +36,10 @@ def include(f, l):
     return r
 
 def filter_dict(f, d):
+    """
+    f is a function that returns a boolean. If f(key) == True, then
+    the key and value are inserted into the result dictionary.
+    """
     r = {}
     for k, v in d.iteritems():
         if f(k):

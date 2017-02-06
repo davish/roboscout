@@ -1,18 +1,28 @@
+# -*- coding: utf8 -*-
+
+"""
+roboscout.py
+
+Functions for parsing matchlists and calculating statistics about individual teams.
+"""
 import csv
 import copy
 import numpy
 from futil import *
 
 def getData(csv_file='scoreboard.csv', empty=False):
+  """Parse matchlist from CSV file."""
   data = []
   with open(csv_file, 'rU') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
+      # If a row is not empty (or if we want to include empty rows)
       if empty or row['Red Score'] != '':
         data.append(row)
   return data
 
 def teamToMatch(data):
+  """Take matchlist, return dict of teams as keys and a list of their matches as values"""
   teams = {}
   teamNames = ['Red 1', 'Red 2', 'Blue 1', 'Blue 2']
   for row in data:
@@ -29,20 +39,25 @@ def teamToMatch(data):
   return teams
 
 def teamToMatchScores(teams):
+  """Return dict associating teams with their match scores."""
   ms = {}
   for team, matches in teams.iteritems():
     ms[team] = [float(r[r['team']+' Score']) for r in matches]
   return ms
 
 def get_partners(matches):
+  """Return list of match partners given a matchlist."""
   r = []
   for match in matches:
-    num = int(match['position'][-1])
+    num = int(match['position'][-1]) # Find our team number.
+    # Our teammate's number will be associated with Red2 if we are Red1 and
+    # vice versa.
     teammate = match['team'] + ' ' + str(num%2 +1)
     r.append(match[teammate])
   return r
 
 def display(opar, oar):
+  """Display statistics for debugging."""
   import operator
   rank = sorted(opar.items(), key=operator.itemgetter(1))
   rank.reverse()
@@ -53,7 +68,12 @@ def display(opar, oar):
 
 
 def scout(d, m=None, tm=None):
+  """
+  Pull individual robot performance out of a matchlist where scores are shown for two-on-two matches.
 
+  Basic assumption: If a robot’s average in all of its matches is higher than the averages of its alliance partners,
+  then its likely that that robot contributed more points to the final match score than its partner.
+  """
   if m is None:
     m = teamToMatch(d)
   if tm is None:
@@ -68,11 +88,14 @@ def scout(d, m=None, tm=None):
 
   # Difference between a team's average and their alliance partner's
   mod = mapzip(lambda t: round(ta[t]-tpa[t],3), teams)
-  # Expected output of the team given their average and modifier
-  # expo = mapzip(lambda t: round((ta[t]+mod[t])/2,3), teams)
+  # Expected output per round of the team given their average and modifier
+  # The team average is divided by two since it is assumed that the "baseline"
+  # is that teams are scoring equally before adding their modifiers.
   expo = mapzip(lambda t: round(ta[t]/2+mod[t]), teams)
   avgexpo = avg(expo.values())
 
+  # "OPAR" describes how much a team's expected
+  # output is  above or below the average. OPAR of 1.0 is an average team.
   opar = mapd(lambda x: 0, expo) if avgexpo==0 else mapd(lambda o: round(o/avgexpo,1), expo)
 
   # standard deviation of each round's expected individual output

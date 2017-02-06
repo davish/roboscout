@@ -1,5 +1,14 @@
 #!/usr/bin/python
 
+"""
+run_scout.py
+
+Script to run roboscout on a specific match, displaying teams
+in order of best to wors ("best" being decided by which team's expected output is most above average).
+
+Takes the path to a matchlist as a command-line argument.
+"""
+
 from roboscout import *
 from futil import *
 import sys

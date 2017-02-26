@@ -1,7 +1,11 @@
+#!/usr/bin/python
+
 import csv
 import re
 from bs4 import BeautifulSoup
 import urllib2
+import sys
+import unicodedata
 
 def team(s):
     if s[-1] == '*':
@@ -46,7 +50,10 @@ def save_matchlist(matchlist, filename):
             writer.writerow(row)
 
 if __name__ == '__main__':
-    r = urllib2.urlopen('http://csis.pace.edu/~firsttech/live/cache/MatchResults_Hudson_Valley_Championship.html')
-    html_doc = r.read()
+    # f = open(sys.argv[1], 'r')
+    # html_doc = f.read()
+    html_doc = urllib2.urlopen('http://scoring.ftcpenn.org/cache/MatchResults_Pennsylvania_FTC_Championship.html').read()
+    # html_doc = unicodedata.normalize("NFKD", html_doc)
+    # f.close()
     matches = html_to_matchlist(html_doc)
-    save_matchlist(matches, 'test')
+    save_matchlist(matches, 'penn')

@@ -76,8 +76,8 @@ def compare_matchlists(m1, m2):
     return confirmation
 
 if __name__ == '__main__':
-    s = metatournament.scout_SR(officialparser.parse_SR())
-    t = predict_tournament('matchlists/scoreboard_franklin.csv', s['expo'], start=110)
+    s = roboscout.scout(roboscout.getData('matchlists/hopper1.csv'))
+    t = predict_tournament('matchlists/hopper1.csv', s['expo'])
 
     d = map(lambda r: [r['Round #'],
                        r['Red Score'],

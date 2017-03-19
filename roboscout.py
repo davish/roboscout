@@ -100,11 +100,11 @@ def scout(d, m=None, tm=None):
 
   # standard deviation of each round's expected individual output
   # based on the individual round score and the team's modifier
-  stdev = mapzip(lambda t: numpy.std(
-    map(lambda match: round(match/2+mod[t], 3),tm[t])), teams)
+  stdev = mapzip(lambda t: round(numpy.std(
+    map(lambda match: round(match/2+mod[t], 3),tm[t])), 1), teams)
   # Percent deviation, taking the standard deviation divided by the
   # expected output
-  pdev = mapzip(lambda t: round(stdev[t] / expo[t], 3), teams)
+  pdev = mapzip(lambda t: round(div(stdev[t], expo[t]), 3), teams)
   # Percent deviation times OPAR gives the possible variance in OPAR
   # from round-to-round
   oar = mapzip(lambda t: round(opar[t] * pdev[t], 1), teams)

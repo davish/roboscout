@@ -2,6 +2,7 @@ from roboscout import *
 from officialparser import *
 from metatournament import *
 from futil import *
+from parse_details import parse_details
 
 WORLDS = [
     '535',
@@ -122,16 +123,19 @@ if __name__ == '__main__':
     #                 'ET': 'East',
     #                 'NR': 'North',
     #                 'WS': 'West'}
-    s = scout_SR(parse_SR())
+    # s = scout_SR(parse_SR())
 
-    avgexpo = avg(s['expo'].values())
-    opar = mapd(lambda o: round(o/avgexpo,1), s['expo'])
-
+    s = scout(parse_details('matchlists/hopperdetails.csv', 'EndG'))
     h = ['team', 'expo', 'var', 'opar']
     d = map(lambda t: [t,
                        s['expo'][t],
                        round(s['variance'][t]),
-                       opar[t]],
+                       s['opar'][t]],
                        s['expo'].keys())
     d = sorted(d, key=operator.itemgetter(1), reverse=True)
     print_table(h, d)
+
+    # m = teamToMatchScores(teamToMatch(getData('matchlists/penn.csv')))
+    # print sum(m['4174'])
+    # print sum(m['9372'])
+

@@ -52,8 +52,8 @@ def save_matchlist(matchlist, filename):
 if __name__ == '__main__':
     # f = open(sys.argv[1], 'r')
     # html_doc = f.read()
-    html_doc = urllib2.urlopen('http://scoring.ftcpenn.org/cache/MatchResults_Pennsylvania_FTC_Championship.html').read()
+    html_doc = urllib2.urlopen('http://scoring.ftceast.org/cache/MatchResults_East_Super-Regional_Hopper.html').read()
     # html_doc = unicodedata.normalize("NFKD", html_doc)
     # f.close()
     matches = html_to_matchlist(html_doc)
-    save_matchlist(matches, 'penn')
+    save_matchlist(matches, 'hopper1')

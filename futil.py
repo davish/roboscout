@@ -13,6 +13,13 @@ def avg(l):
     s = s + o
   return float('NaN') if len(l) == 0 else round(s / len(l),5)
 
+def div(n, d):
+  if d != 0:
+    return n/d
+  else:
+    return 0
+
+
 def mapd(f, d):
   """
     Analog of of map() for dictionaries. Applies a function to each value

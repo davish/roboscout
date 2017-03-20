@@ -35,7 +35,7 @@ def html_to_matchlist(html_doc):
                 'Blue 1': team(cells[3].string)
             }
             matches.append(d)
-        else:
+        elif len(cells) > 1:
             matches[-1]['Red 2'] = team(cells[0].string)
             matches[-1]['Blue 2'] = team(cells[1].string)
 
@@ -43,17 +43,62 @@ def html_to_matchlist(html_doc):
 
 def save_matchlist(matchlist, filename):
     fieldnames = ['Round #','Red 1','Red 2','Blue 1','Blue 2','Red Score','Blue Score']
-    with open('matchlists/'+filename+'.csv', 'w') as csvfile:
+    with open('matchlists/'+filename, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for row in matchlist:
             writer.writerow(row)
 
+def details_to_matchlist(data, category):
+  matches = []
+  if category not in ['Tot', 'Auto', 'Tele', 'EndG']:
+    category = 'Tot' 
+  for row in data:
+    red = row['Red Teams'].split(' ')
+    blue = row['Blue Teams'].split(' ');
+    matches.append({
+      'Red 1': red[0],
+      'Red 2': red[1],
+      'Blue 1': blue[0],
+      'Blue 2': blue[1],
+      'Red Score': row['Red ' + category],
+      'Blue Score': row['Blue ' + category]
+      })
+  return matches
+
+def parse_details(html_doc):
+  soup = BeautifulSoup(html_doc, 'html.parser')
+  rows = soup.find_all('tr')[2:]
+  matches = []
+  for row in rows:
+    cells = row.find_all('td')
+    if cells[0].string[0] == 'Q':
+      matches.append({
+        'Red Teams': cells[2].string,
+        'Blue Teams': cells[3].string,
+        'Red Tot': cells[4].string,
+        'Red Auto': cells[5].string,
+        'Red Tele': cells[7].string,
+        'Red EndG': cells[8].string,
+        'Blue Tot': cells[10].string,
+        'Blue Auto': cells[11].string,
+        'Blue Tele': cells[13].string,
+        'Blue EndG': cells[14].string
+        })
+  return matches
+
 if __name__ == '__main__':
-    # f = open(sys.argv[1], 'r')
-    # html_doc = f.read()
-    html_doc = urllib2.urlopen('http://scoring.ftceast.org/cache/MatchResults_East_Super-Regional_Hopper.html').read()
-    # html_doc = unicodedata.normalize("NFKD", html_doc)
-    # f.close()
-    matches = html_to_matchlist(html_doc)
-    save_matchlist(matches, 'hopper1')
+    
+    mode = sys.argv[2]
+    url = sys.argv[1]
+    filename = sys.argv[3]
+
+    html_doc = urllib2.urlopen(url).read()
+    if mode == 'match':
+        matches = html_to_matchlist(html_doc)
+    elif mode in ['Tot', 'Auto', 'EndG', 'Tele']:
+        matches = details_to_matchlist(parse_details(html_doc), mode)
+    else:
+        matches = []
+
+    save_matchlist(matches, filename)

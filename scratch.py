@@ -13,12 +13,4 @@ def print_table(h, d):
     print s
 
 if __name__ == '__main__':
-    import operator
-
-    teams = ['4174', '7117', '8645', '7486', '5484', '9773', '3737']
-
-    matches = getData('matchlists/hopperendg.csv')
-    matches.extend(getData('matchlists/teslaendg.csv'))
-    s = scout(matches)
-    for t in teams:
-        print '%s \t: %s' % (t, s['expo'][t])
+    

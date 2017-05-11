@@ -1,3 +1,5 @@
 *.pyc
 *.csv
 matchlists/
+details/
+.ipynb_checkpoints/

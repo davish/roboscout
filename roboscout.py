@@ -17,7 +17,7 @@ def getData(csv_file='scoreboard.csv', empty=False):
     reader = csv.DictReader(csvfile)
     for row in reader:
       # If a row is not empty (or if we want to include empty rows)
-      if empty or row['Red Score'] != '':
+      if empty or (row['Red Score'].strip() != '' and row['Red Score'] != '\xc2\xa0'):
         data.append(row)
   return data
 
@@ -98,6 +98,8 @@ def scout(d, m=None, tm=None):
   # output is  above or below the average. OPAR of 1.0 is an average team.
   opar = mapd(lambda x: 0, expo) if avgexpo==0 else mapd(lambda o: round(o/avgexpo,1), expo)
 
+  contrib = mapzip(lambda t: map(lambda match: round(match/2+mod[t], 3),tm[t]), teams)
+
   # standard deviation of each round's expected individual output
   # based on the individual round score and the team's modifier
   stdev = mapzip(lambda t: round(numpy.std(
@@ -118,6 +120,7 @@ def scout(d, m=None, tm=None):
     'opar': opar,
     'variance': stdev,
     'oar': oar,
+    'contribution': contrib,
     # 'avg': avgexpo
   }
 

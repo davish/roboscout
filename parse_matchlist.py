@@ -29,21 +29,21 @@ def html_to_matchlist(html_doc):
             elif len(cells) == 2:
                 scores = ('', '')
             d = {
-                'Round #': cells[0].string[2:],
-                'Red Score': scores[0],
-                'Blue Score': scores[1],
-                'Red 1': team(cells[2].string),
-                'Blue 1': team(cells[3].string)
+                'roundnum': cells[0].string[2:],
+                'redscore': scores[0],
+                'bluescore': scores[1],
+                'red1': team(cells[2].string),
+                'blue1': team(cells[3].string)
             }
             matches.append(d)
         elif len(cells) > 1:
-            matches[-1]['Red 2'] = team(cells[0].string)
-            matches[-1]['Blue 2'] = team(cells[1].string)
+            matches[-1]['red2'] = team(cells[0].string)
+            matches[-1]['blue2'] = team(cells[1].string)
 
     return matches
 
 def save_matchlist(matchlist, filename):
-    fieldnames = ['Round #','Red 1','Red 2','Blue 1','Blue 2','Red Score','Blue Score']
+    fieldnames = ['roundnum','red1','red2','blue1','blue2','redscore','bluescore']
     with open('matchlists/'+filename, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -58,13 +58,13 @@ def details_to_matchlist(data, category):
     red = row['Red Teams'].split(' ')
     blue = row['Blue Teams'].split(' ');
     matches.append({
-      'Round #': row['Round #'],
-      'Red 1': red[0],
-      'Red 2': red[1],
-      'Blue 1': blue[0],
-      'Blue 2': blue[1],
-      'Red Score': row['Red ' + category],
-      'Blue Score': row['Blue ' + category]
+      'roundnum': row['Round #'],
+      'red1': red[0],
+      'red2': red[1],
+      'blue1': blue[0],
+      'blue2': blue[1],
+      'redscore': row['Red ' + category],
+      'bluescore': row['Blue ' + category]
       })
   return matches
 

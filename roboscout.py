@@ -17,23 +17,23 @@ def getData(csv_file='scoreboard.csv', empty=False):
     reader = csv.DictReader(csvfile)
     for row in reader:
       # If a row is not empty (or if we want to include empty rows)
-      if empty or (row['Red Score'].strip() != '' and row['Red Score'] != '\xc2\xa0'):
+      if empty or (row['redscore'].strip() != '' and row['bluescore'] != '\xc2\xa0'):
         data.append(row)
   return data
 
 def teamToMatch(data):
   """Take matchlist, return dict of teams as keys and a list of their matches as values"""
   teams = {}
-  teamNames = ['Red 1', 'Red 2', 'Blue 1', 'Blue 2']
+  teamNames = ['red1', 'red2', 'blue1', 'blue2']
   for row in data:
     for n in teamNames:
       if row[n] not in teams:
         teams[row[n]] = []
       r = copy.copy(row)
-      if n.find('Red') == 0:
-        r['team'] = 'Red'
+      if n.find('red') == 0:
+        r['team'] = 'red'
       else:
-        r['team'] = 'Blue'
+        r['team'] = 'blue'
       r['position'] = n
       teams[row[n]].append(r)
   return teams
@@ -42,7 +42,7 @@ def teamToMatchScores(teams):
   """Return dict associating teams with their match scores."""
   ms = {}
   for team, matches in teams.iteritems():
-    ms[team] = [float(r[r['team']+' Score']) for r in matches]
+    ms[team] = [float(r[r['team']+'score']) for r in matches]
   return ms
 
 def get_partners(matches):
@@ -52,7 +52,7 @@ def get_partners(matches):
     num = int(match['position'][-1]) # Find our team number.
     # Our teammate's number will be associated with Red2 if we are Red1 and
     # vice versa.
-    teammate = match['team'] + ' ' + str(num%2 +1)
+    teammate = match['team'] + str(num%2 +1)
     r.append(match[teammate])
   return r
 

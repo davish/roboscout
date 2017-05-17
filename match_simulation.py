@@ -6,29 +6,29 @@ def normal(expo, std):
     return np.random.normal(expo, std)
 
 def discrete(contrib):
-    return random.choice(contrib)
+    return random.choice(contrib) if len(contrib) > 0 else 0
 
 def discrete_dist(contrib, std):
     return normal(discrete(contrib), std)
 
 
-def simulate_match(m, s, dist='discrete'):
+def simulate_match(m, s, dist):
     red = 0
     blue = 0
     for x in xrange(10000):
         bluescore = 0
         redscore = 0
-        for pos in ['Red 1', 'Red 2', 'Blue 1', 'Blue 2']:
+        for pos in ['red1', 'red2', 'blue1', 'blue2']:
             team = m[pos]
             expo = s['expo'][team]
             std = s['variance'][team]
             if dist == 'discrete':
-                score = discrete(s['contribution'])
+                score = discrete(s['contribution'][team])
             elif dist == 'normal':
                 score = normal(expo, std)
             elif dist == 'discretedist':
                 score = discrete_dist(s['contribution'][team], std)
-            if 'Red' in pos:
+            if 'red' in pos:
                 redscore += score
             else:
                 bluescore += score
@@ -40,7 +40,7 @@ def simulate_match(m, s, dist='discrete'):
 
 def simulate_matchlist(matchlist, scout, start, dist='discrete'):
     result = []
-    for match in matchlist[start:]:
+    for match in matchlist[(start-1):]:
         m = match.copy()
         m['prediction'] = simulate_match(match, scout, dist)
         result.append(m)

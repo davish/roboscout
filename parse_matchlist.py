@@ -50,7 +50,7 @@ def save_matchlist(matchlist, filename):
         for row in matchlist:
             writer.writerow(row)
 
-def details_to_matchlist(data, category):
+def details_to_matchlist(data, category='Tot'):
   matches = []
   if category not in ['Tot', 'Auto', 'Tele', 'EndG']:
     category = 'Tot' 
@@ -74,7 +74,10 @@ def parse_details(html_doc):
   matches = []
   for row in rows:
     cells = row.find_all('td')
-    if len(cells) > 0 and cells[0].string[0] == 'Q' and int(cells[0].string[2:]) <= 144:
+    if row.attrs.get('align', '').lower() == 'center' and \
+        len(cells) > 0 and \
+        cells[0].string[0] == 'Q' and \
+        int(cells[0].string[2:]) <= 144:
       matches.append({
         'Round #': cells[0].string[2:],
         'Red Teams': cells[2].string,
@@ -89,6 +92,39 @@ def parse_details(html_doc):
         'Blue EndG': cells[14].string
         })
   return matches
+
+def get_playoff_details(html_doc):
+  soup = BeautifulSoup(html_doc, 'html.parser')
+  rows = soup.find_all('tr')[2:]
+  alliances = [(), (), (), ()]
+  finalalliance = [(), ()]
+  red = 0
+  blue = 0
+  for row in rows:
+    cells = row.find_all('td')
+    if row.attrs.get('align', '').lower() != 'center' or len(cells) <= 0: 
+      continue
+    t = cells[0].string
+
+    if t[:2] == 'SF':
+      if t[3] == '1':
+        alliances[0] = cells[2].string.strip().split(' ')
+        alliances[3] = cells[3].string.strip().split(' ')
+      elif t[3] == '2':
+        alliances[1] = cells[2].string.strip().split(' ')
+        alliances[2] = cells[3].string.strip().split(' ')
+    if t[0] == 'F':
+      w = cells[1].string.strip().split(' ')[-1]
+      finalalliance[0] = cells[2].string.strip().split(' ')
+      finalalliance[1] = cells[3].string.strip().split(' ')
+      if w == 'R':
+        red += 1
+      elif w == 'B':
+        blue += 1
+
+  return (alliances, finalalliance[0] if red > blue else finalalliance[1])
+    
+  
 
 def save_details(deets, filename):
   import operator

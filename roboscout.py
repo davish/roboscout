@@ -66,6 +66,16 @@ def display(opar, oar):
     s= team + " opar:" + str(opar[team]) + " oar:" + str(oar[team])
     print s
 
+def getAdjustedContrib(team, matches, averages):
+  contrib = []
+  for match in matches:
+    score = match[match['team']+'score']
+    num = int(match['position'][-1]) # Find our team number.
+    partner = match['team'] + str(num%2 +1)
+    mod = averages[team] - averages[match[partner]]
+    contrib.append(score/2+mod)
+  return contrib
+
 
 def scout(d, m=None, tm=None):
   """
@@ -100,6 +110,8 @@ def scout(d, m=None, tm=None):
 
   contrib = mapzip(lambda t: map(lambda match: round(match/2+mod[t], 3),tm[t]), teams)
 
+  adjusted_contrib = mapzip(lambda t: getAdjustedContrib(t, m[t], ta), teams)
+
   # standard deviation of each round's expected individual output
   # based on the individual round score and the team's modifier
   stdev = mapzip(lambda t: round(numpy.std(
@@ -120,7 +132,8 @@ def scout(d, m=None, tm=None):
     'opar': opar,
     'variance': stdev,
     'oar': oar,
-    'contribution': contrib,
+    'contribution': adjusted_contrib,
+    'adjusted_contrib': contrib
     # 'avg': avgexpo
   }
 

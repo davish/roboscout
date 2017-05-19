@@ -9,7 +9,7 @@ def discrete(contrib):
     return random.choice(contrib) if len(contrib) > 0 else 0
 
 def discrete_dist(contrib, std):
-    return normal(discrete(contrib), std)
+    return normal(discrete(contrib), 40)
 
 def simulate_round(m, s, dist):
     bluescore = 0
@@ -75,7 +75,10 @@ def simulate_series(red_alliance, blue_alliance, scout, dist='discrete'):
         else:
             blue += 1
 
-    d = [(round(float(f['red'])/(f['red']+f['blue'])*100), round(float(f['blue'])/(f['red']+f['blue'])*100)) for f in details]
+    try:
+        d = [(round(float(f['red'])/(f['red']+f['blue'])*100), round(float(f['blue'])/(f['red']+f['blue'])*100)) for f in details]
+    except Exception:
+        d = [(0, 0) for f in details]
     winner = red_alliance if red > blue else blue_alliance
     return (winner, (round(float(red)/(red+blue)*100, 1), round(float(blue)/(red+blue)*100, 1)), d)
 

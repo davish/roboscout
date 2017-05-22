@@ -73,7 +73,7 @@ def getAdjustedContrib(team, matches, averages):
     num = int(match['position'][-1]) # Find our team number.
     partner = match['team'] + str(num%2 +1)
     mod = averages[team] - averages[match[partner]]
-    contrib.append(score/2+mod)
+    contrib.append(float(score)/2+mod)
   return contrib
 
 

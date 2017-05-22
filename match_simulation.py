@@ -82,13 +82,97 @@ def simulate_series(red_alliance, blue_alliance, scout, dist='discrete'):
     winner = red_alliance if red > blue else blue_alliance
     return (winner, (round(float(red)/(red+blue)*100, 1), round(float(blue)/(red+blue)*100, 1)), d)
 
+def get_other_alliance(a, a1, a2):
+    if set(a) == set(a1):
+        return a2
+    else:
+        return a1
+
 def simulate_playoffs(alliances, scout, dist='discrete'):
     onefour, prob1, d1 = simulate_series(alliances[0], alliances[3], scout, dist)
     twothree, prob2, d2 = simulate_series(alliances[1], alliances[2], scout, dist)
 
+    loser1 = get_other_alliance(onefour, alliances[0], alliances[3])
+    loser2 = get_other_alliance(twothree, alliances[1], alliances[2])
+
+    loserwin1, prob4, d4 = simulate_series(onefour, loser2, scout, dist)
+    loserwin2, prob5, d5 = simulate_series(loser1, twothree, scout, dist)
+    losers, prob6, d6 = simulate_series(loser1, loser2, scout, dist)
+
     winner, prob3, d3 = simulate_series(onefour, twothree, scout, dist)
 
-    return {'SF-1': (onefour, prob1, d1), 'SF-2': (twothree, prob2, d2), 'F': (winner, prob3, d3)}
+    # return {'SF-1': (onefour, prob1, d1), 'SF-2': (twothree, prob2, d2), 'F': (winner, prob3, d3)}
+
+    return ({
+        str(onefour): {
+            'seed': '1' if set(onefour) == set(alliances[0]) else '4',
+            'SF': {
+                'prob': prob1,
+                'details': d1
+            },
+            'F': {
+                str(twothree): {
+                    'prob': prob3,
+                    'details': d3
+                },
+                str(loser2): {
+                    'prob': prob4,
+                    'details': d4
+                }
+            }
+        },
+        str(loser1): {
+            'seed': '1' if set(loser1) == set(alliances[0]) else '4',
+            'SF': {
+                'prob': prob1,
+                'details': d1
+            },
+            'F': {
+                str(twothree): {
+                    'prob': prob5,
+                    'details': d5
+                },
+                str(loser2): {
+                    'prob': prob6,
+                    'details': d6
+                }
+            }
+        },
+        str(twothree): {
+            'seed': '2' if set(twothree) == set(alliances[1]) else '3',
+            'SF': {
+                'prob': prob2,
+                'details': d2,
+            },
+            'F': {
+                str(onefour): {
+                    'prob': prob3,
+                    'details': d3
+                },
+                str(loser1): {
+                    'prob': prob5,
+                    'details': d5
+                }
+            }
+        },
+        str(loser2): {
+            'seed': '2' if set(loser2) == set(alliances[1]) else '3',
+            'SF': {
+                'prob': prob2,
+                'details': d2,
+            },
+            'F': {
+                str(onefour): {
+                    'prob': prob4,
+                    'details': d4
+                },
+                str(loser1): {
+                    'prob': prob6,
+                    'details': d6
+                }
+            }
+        },
+    }, {'SF-1': (onefour, prob1, d1), 'SF-2': (twothree, prob2, d2), 'F': (winner, prob3, d3)})
 
 
 def arrange_match(red_alliance, blue_alliance, alternate=False):
@@ -102,7 +186,5 @@ def arrange_match(red_alliance, blue_alliance, alternate=False):
             'red1': red_alliance[0], 'red2': red_alliance[1], 
             'blue1': blue_alliance[0], 'blue2': blue_alliance[1]
             }, not alternate)
-
-
 
 

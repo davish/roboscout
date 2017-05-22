@@ -88,6 +88,9 @@ def get_other_alliance(a, a1, a2):
     else:
         return a1
 
+def stringify_alliance(a):
+    return '-'.join(a)
+
 def simulate_playoffs(alliances, scout, dist='discrete'):
     onefour, prob1, d1 = simulate_series(alliances[0], alliances[3], scout, dist)
     twothree, prob2, d2 = simulate_series(alliances[1], alliances[2], scout, dist)
@@ -104,7 +107,7 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
     # return {'SF-1': (onefour, prob1, d1), 'SF-2': (twothree, prob2, d2), 'F': (winner, prob3, d3)}
 
     return ({
-        str(onefour): {
+        stringify_alliance(onefour): {
             'seed': '1' if set(onefour) == set(alliances[0]) else '4',
             'SF': {
                 'prob': prob1,
@@ -121,7 +124,7 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
                 }
             }
         },
-        str(loser1): {
+        stringify_alliance(loser1): {
             'seed': '1' if set(loser1) == set(alliances[0]) else '4',
             'SF': {
                 'prob': prob1,
@@ -138,7 +141,7 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
                 }
             }
         },
-        str(twothree): {
+        stringify_alliance(twothree): {
             'seed': '2' if set(twothree) == set(alliances[1]) else '3',
             'SF': {
                 'prob': prob2,
@@ -155,7 +158,7 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
                 }
             }
         },
-        str(loser2): {
+        stringify_alliance(loser2): {
             'seed': '2' if set(loser2) == set(alliances[1]) else '3',
             'SF': {
                 'prob': prob2,

@@ -82,11 +82,11 @@ def parse_details(html_doc):
         'Round #': cells[0].string[2:],
         'Red Teams': cells[2].string,
         'Blue Teams': cells[3].string,
-        'Red Tot': int(cells[4].string) - int(cells[9].string),
+        'Red Tot': int(cells[4].string), # - int(cells[9].string)
         'Red Auto': cells[5].string,
         'Red Tele': cells[7].string,
         'Red EndG': cells[8].string,
-        'Blue Tot': int(cells[10].string) - int(cells[15].string),
+        'Blue Tot': int(cells[10].string), # - int(cells[15].string)
         'Blue Auto': cells[11].string,
         'Blue Tele': cells[13].string,
         'Blue EndG': cells[14].string

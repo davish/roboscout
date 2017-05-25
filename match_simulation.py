@@ -114,11 +114,11 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
                 'details': d1
             },
             'F': {
-                str(twothree): {
+                stringify_alliance(twothree): {
                     'prob': prob3,
                     'details': d3
                 },
-                str(loser2): {
+                stringify_alliance(loser2): {
                     'prob': prob4,
                     'details': d4
                 }
@@ -131,11 +131,11 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
                 'details': d1
             },
             'F': {
-                str(twothree): {
+                stringify_alliance(twothree): {
                     'prob': prob5,
                     'details': d5
                 },
-                str(loser2): {
+                stringify_alliance(loser2): {
                     'prob': prob6,
                     'details': d6
                 }
@@ -148,11 +148,11 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
                 'details': d2,
             },
             'F': {
-                str(onefour): {
+                stringify_alliance(onefour): {
                     'prob': prob3,
                     'details': d3
                 },
-                str(loser1): {
+                stringify_alliance(loser1): {
                     'prob': prob5,
                     'details': d5
                 }
@@ -165,11 +165,11 @@ def simulate_playoffs(alliances, scout, dist='discrete'):
                 'details': d2,
             },
             'F': {
-                str(onefour): {
+                stringify_alliance(onefour): {
                     'prob': prob4,
                     'details': d4
                 },
-                str(loser1): {
+                stringify_alliance(loser1): {
                     'prob': prob6,
                     'details': d6
                 }
